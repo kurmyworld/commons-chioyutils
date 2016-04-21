@@ -24,8 +24,9 @@ import cn.chioy.http.HttpHelper;
  * 
  */
 public class BingImageLoader {
-	private static URL mImgURL;
+	private static String mImgURL;
 	private static SimpleLog mLog = new SimpleLog("BingImageLoader");
+
 	public BingImageLoader() {
 		super();
 		mImgURL = getUrl();
@@ -35,14 +36,14 @@ public class BingImageLoader {
 	 * @param url
 	 *            下载自定义图片的URL
 	 */
-	public void setImgURL(URL url) {
+	public void fixImgURL(String url) {
 		mImgURL = url;
 	}
 
 	/**
 	 * @return 若没有手动设置ImgURL则返回默认的BingImageURL
 	 */
-	public URL getImgURL() {
+	public String getImgURL() {
 		return mImgURL;
 	}
 
@@ -62,7 +63,7 @@ public class BingImageLoader {
 			out.write(data);
 			mLog.info("Putting Image From URL to Response Client...");
 		} catch (Exception e) {
-			e.printStackTrace();
+			mLog.error("Some Exception");
 		}
 	}
 
@@ -96,9 +97,9 @@ public class BingImageLoader {
 	 */
 	public boolean hasCache(File file) {
 		mLog.info("Checkking file is exists...");
-		if(file.exists()){
+		if (file.exists()) {
 			mLog.info("File exists!");
-		}else{
+		} else {
 			mLog.info("File is not exists!");
 		}
 		return file.exists();
@@ -120,13 +121,14 @@ public class BingImageLoader {
 		} catch (Exception e) {
 			mLog.error("Cache false!");
 		}
-		
+
 	}
 
-	private URL getUrl() {
-		URL _url = null;
+	private String getUrl() {
+		URL addr;
 		try {
-			URL addr = new URL("http://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1");
+			addr = new URL(
+					"http://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1");
 			String json_str = HttpHelper
 					.pub(addr, HttpHelper.SUBMIT_METHOD_GET);
 			String pattern = "url\":(.*)\\.jpg";
@@ -138,15 +140,16 @@ public class BingImageLoader {
 			if (m.find()) {
 				img_url = m.group(0).replace("url\":\"", "");
 			}
-			_url = new URL(img_url);
+			return img_url;
 		} catch (MalformedURLException e) {
-
+			return "";
 		}
-		return _url;
+
 	}
 
 	private static byte[] getURLFileData() throws Exception {
-		HttpURLConnection httpConn = (HttpURLConnection) mImgURL
+		URL url = new URL(mImgURL);
+		HttpURLConnection httpConn = (HttpURLConnection) url
 				.openConnection();
 		httpConn.connect();
 		InputStream cin = httpConn.getInputStream();
