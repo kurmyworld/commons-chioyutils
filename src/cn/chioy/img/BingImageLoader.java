@@ -34,14 +34,14 @@ public class BingImageLoader {
 
 	/**
 	 * @param url
-	 *            ÏÂÔØ×Ô¶¨ÒåÍ¼Æ¬µÄURL
+	 *            è‡ªå®šä¹‰URLåœ°å€æ¥ä¿®å¤å›¾ç‰‡URL
 	 */
 	public void fixImgURL(String url) {
 		mImgURL = url;
 	}
 
 	/**
-	 * @return ÈôÃ»ÓĞÊÖ¶¯ÉèÖÃImgURLÔò·µ»ØÄ¬ÈÏµÄBingImageURL
+	 * @return å¦‚æœæ²¡æœ‰è°ƒç”¨fixImgURLåˆ™è¿”å›é»˜è®¤è§£æå‡ºçš„URLåœ°å€ï¼Œå¦åˆ™è¿”å›ä¿®å¤åçš„URLåœ°å€
 	 */
 	public String getImgURL() {
 		return mImgURL;
@@ -50,7 +50,7 @@ public class BingImageLoader {
 	/**
 	 * 
 	 * @param response
-	 *            Ö±½ÓÏò¿Í»§¶Ë·¢ËÍÍ¼Æ¬×Ö½ÚÊı¾İ
+	 *            ç”¨HttpServletResponseæ¥ç›´æ¥å‘å®¢æˆ·ç«¯è¾“å‡ºå›¾ç‰‡æµ
 	 * @since JavaEE6.0
 	 * 
 	 */
@@ -70,9 +70,9 @@ public class BingImageLoader {
 	/**
 	 * 
 	 * @param response
-	 *            Ö±½ÓÏò¿Í»§¶Ë·¢ËÍÒÑ»º´æµÄÍ¼Æ¬×Ö½ÚÊı¾İ
+	 *            ç”¨HttpServletResponseæ¥ç›´æ¥å‘å®¢æˆ·ç«¯è¾“å‡ºå›¾ç‰‡æµ
 	 * @param file
-	 *            Ö¸¶¨»º´æÎÄ¼ş
+	 *            å›¾ç‰‡ç¼“å­˜æ–‡ä»¶
 	 */
 	public void putPicFromCache(HttpServletResponse response, File file) {
 		try {
@@ -92,23 +92,24 @@ public class BingImageLoader {
 	/**
 	 * 
 	 * @param file
-	 *            »º´æÎÄ¼ş
-	 * @return ¸ÃÎÄ¼şÊÇ·ñ´æÔÚ
+	 *            å›¾ç‰‡ç¼“å­˜æ–‡ä»¶
+	 * @return æ˜¯å¦å­˜åœ¨è¯¥æ–‡ä»¶
 	 */
 	public boolean hasCache(File file) {
 		mLog.info("Checkking file is exists...");
 		if (file.exists()) {
 			mLog.info("File exists!");
+			return true;
 		} else {
 			mLog.info("File is not exists!");
+			return false;
 		}
-		return file.exists();
 	}
 
 	/**
 	 * 
 	 * @param file
-	 *            Òª»º´æµÄÎÄ¼ş
+	 *           å›¾ç‰‡ç¼“å­˜æ–‡ä»¶
 	 */
 	public void cacheTo(File file) {
 		try {
@@ -129,13 +130,16 @@ public class BingImageLoader {
 		try {
 			addr = new URL(
 					"http://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1");
-			String json_str = HttpHelper
+			String _str = HttpHelper
 					.pub(addr, HttpHelper.SUBMIT_METHOD_GET);
-			String pattern = "url\":(.*)\\.jpg";
-			// ´´½¨ Pattern ¶ÔÏó
-			Pattern r = Pattern.compile(pattern);
-			// ÏÖÔÚ´´½¨ matcher ¶ÔÏó
-			Matcher m = r.matcher(json_str);
+			String regex = "url\":(.*)\\.jpg";
+			
+			// åˆ›å»ºä¸€ä¸ªä½¿ç”¨æ­£åˆ™è¡¨è¾¾å¼è§„åˆ™regexçš„æ­£åˆ™
+			Pattern pattern = Pattern.compile(regex);
+			
+			//ç”¨è¯¥æ­£åˆ™å»åŒ¹é…å¾…æ­£åˆ™æ–‡æœ¬_str
+			Matcher m = pattern.matcher(_str);
+			
 			String img_url = "";
 			if (m.find()) {
 				img_url = m.group(0).replace("url\":\"", "");
@@ -149,8 +153,7 @@ public class BingImageLoader {
 
 	private static byte[] getURLFileData() throws Exception {
 		URL url = new URL(mImgURL);
-		HttpURLConnection httpConn = (HttpURLConnection) url
-				.openConnection();
+		HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
 		httpConn.connect();
 		InputStream cin = httpConn.getInputStream();
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
