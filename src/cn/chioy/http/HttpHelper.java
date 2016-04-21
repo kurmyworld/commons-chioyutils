@@ -14,18 +14,18 @@ public class HttpHelper {
 	public static final String SUBMIT_METHOD_POST = "POST";
 	public static final String SUBMIT_METHOD_GET = "GET";
 
-	public static String pub(String addr, String method) {
+	public static String pub(URL url, String method) {
 		StringBuilder response = new StringBuilder();
 		HttpURLConnection connection = null;
 		try {
-			URL url = new URL(addr);
 			connection = (HttpURLConnection) url.openConnection();
 			connection.setRequestMethod(method);
 			connection.setConnectTimeout(8000);
 			connection.setReadTimeout(8000);
 			InputStream inputStream = connection.getInputStream();
 			String line;
-			BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					inputStream));
 			while ((line = reader.readLine()) != null) {
 				response.append(line);
 			}
@@ -35,7 +35,7 @@ public class HttpHelper {
 		if (connection != null) {
 			connection.disconnect();
 		}
-		
+
 		return response.toString();
 	}
 }

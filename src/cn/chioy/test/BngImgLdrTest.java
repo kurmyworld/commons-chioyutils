@@ -9,9 +9,9 @@ public class BngImgLdrTest {
 	public static void main(String[] args) {
 		BingImageLoader bngImgldr = new BingImageLoader();
 		System.out.println(bngImgldr.getImgURL());
-		File file = new File("d:"+File.pathSeparator+"a.jpg");
-		
+		File file = new File("d:/abc.jpg");
+		bngImgldr.hasCache(file);
 		bngImgldr.cacheTo(file);
+		bngImgldr.hasCache(file);
 	}
-
 }
